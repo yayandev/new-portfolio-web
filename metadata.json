@@ -1,0 +1,6 @@
+{
+  "name": "Software Engineer Portfolio",
+  "description": "Minimalist, responsive, and uniquely interactive software engineer developer portfolio with real architecture sandboxes and simulated test players.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
