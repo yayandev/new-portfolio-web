@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import "./globals.css"; // Global styles
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Yayan Faturrohman | Senior Systems & Full-Stack Engineer",
+  title: "Yayan Faturrohman | Full-Stack Engineer",
   description:
-    "Minimalist, responsive, and uniquely interactive portfolio featuring compiled interactive project terminals and systems architecture grids.",
+    "Building custom management information systems, web apps, and mobile applications — from Banten for clients across Indonesia.",
 };
 
 export default function RootLayout({
@@ -12,9 +12,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body suppressHydrationWarning>{children}</body>
-    </html>
-  );
+  return children;
 }
