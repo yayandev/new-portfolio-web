@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { MapPin, Github, ArrowUpRight } from "lucide-react";
+import { MapPin, Github, Instagram, ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { getDictionary, t, type Locale } from "@/lib/i18n";
 import { SITE } from "@/lib/constants";
@@ -60,6 +60,17 @@ export function Hero() {
             >
               <Github className="w-3.5 h-3.5" />
               <span>github.com/yayandev</span>
+              <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
+            </a>
+            <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">/</span>
+            <a
+              href={SITE.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 text-stone-500 dark:text-stone-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors group"
+            >
+              <Instagram className="w-3.5 h-3.5" />
+              <span>@yayandev</span>
               <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
             </a>
           </div>

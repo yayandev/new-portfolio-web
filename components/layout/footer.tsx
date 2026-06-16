@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { MapPin, Mail, ArrowUpRight, MessageCircle } from "lucide-react";
+import { MapPin, Mail, ArrowUpRight, MessageCircle, Instagram, Github } from "lucide-react";
 import { getDictionary, t, type Locale } from "@/lib/i18n";
 import { SITE, NAV_ITEMS } from "@/lib/constants";
 
@@ -60,6 +60,26 @@ export function Footer() {
               >
                 <Mail className="w-3.5 h-3.5" />
                 {t(dict, "footer.email")}
+                <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
+              </a>
+              <a
+                href={SITE.github}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors group"
+              >
+                <Github className="w-3.5 h-3.5" />
+                GitHub
+                <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
+              </a>
+              <a
+                href={SITE.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors group"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+                Instagram
                 <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
               </a>
               <a

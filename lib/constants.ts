@@ -4,6 +4,7 @@ export const SITE = {
   tagline: "Full-Stack Engineer",
   email: "faturrohman0311@gmail.com",
   github: "https://github.com/yayandev",
+  instagram: "https://www.instagram.com/yayandev",
   whatsapp: "https://wa.me/6281234567890",
   location: "Banten, Indonesia",
   timezone: "Asia/Jakarta",
