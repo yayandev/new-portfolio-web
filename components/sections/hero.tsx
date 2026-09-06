@@ -1,80 +1,73 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { MapPin, Github, Instagram, ArrowUpRight } from "lucide-react";
-import { motion } from "motion/react";
-import { getDictionary, t, type Locale } from "@/lib/i18n";
+import { motion, useReducedMotion } from "motion/react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TitleBlock } from "@/components/sections/title-block";
+import { useDictionary } from "@/hooks/use-dictionary";
 import { SITE } from "@/lib/constants";
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 export function Hero() {
-  const params = useParams();
-  const locale = (params.locale as Locale) || "id";
-  const dict = getDictionary(locale);
+  const { t } = useDictionary();
+  const reduce = useReducedMotion();
+  const lines = [t("hero.title.1"), t("hero.title.2"), t("hero.title.3")];
+
+  const fade = (delay: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.7, delay, ease },
+  });
 
   return (
-    <section className="min-h-screen flex items-center pt-16">
-      <div className="mx-auto max-w-6xl w-full px-6 py-24 md:py-32">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-          className="max-w-3xl"
-        >
-          <span className="inline-block text-[10px] font-mono tracking-[0.2em] uppercase text-stone-400 dark:text-stone-500 mb-8">
-            {t(dict, "hero.badge")}
-          </span>
+    <section className="relative overflow-hidden pt-16">
+      <div
+        aria-hidden
+        className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[70vh] [mask-image:radial-gradient(70%_60%_at_20%_0%,black,transparent)]"
+      />
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.08]">
-            <span className="text-stone-900 dark:text-stone-100">
-              {t(dict, "hero.title.line1")}
-            </span>
-            <br />
-            <span className="text-stone-900 dark:text-stone-100">
-              {t(dict, "hero.title.line2")}
-            </span>
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
-              {t(dict, "hero.title.line3")}
-            </span>
-          </h1>
+      <div className="mx-auto max-w-6xl px-5 pb-16 pt-14 sm:px-8 sm:pt-20 lg:pb-24 lg:pt-28">
+        <motion.p {...fade(0)} className="display-narrow text-[11px] text-accent">
+          {t("hero.eyebrow")}
+        </motion.p>
 
-          <p className="mt-6 text-base sm:text-lg leading-relaxed text-stone-500 dark:text-stone-400 max-w-xl">
-            {t(dict, "hero.description")}
-          </p>
+        <h1 className="display-wide mt-6 text-[min(2.6rem,9.4vw)] leading-[0.96] sm:text-6xl lg:text-[5.5rem] xl:text-[6.25rem]">
+          {lines.map((line, i) => (
+            <span key={i} className="block overflow-hidden pb-[0.06em]">
+              <motion.span
+                className="block"
+                initial={reduce ? false : { y: "105%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.9, delay: 0.1 + i * 0.09, ease }}
+              >
+                {line}
+              </motion.span>
+            </span>
+          ))}
+        </h1>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs font-mono">
-            <span className="inline-flex items-center gap-1.5 text-stone-400 dark:text-stone-500">
-              <MapPin className="w-3.5 h-3.5" />
-              {t(dict, "hero.meta.location")}
-            </span>
-            <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">/</span>
-            <span className="text-stone-400 dark:text-stone-500">
-              {t(dict, "hero.meta.role")}
-            </span>
-            <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">/</span>
-            <a
-              href={SITE.github}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-stone-500 dark:text-stone-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
-            >
-              <Github className="w-3.5 h-3.5" />
-              <span>github.com/yayandev</span>
-              <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
-            </a>
-            <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">/</span>
-            <a
-              href={SITE.instagram}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-stone-500 dark:text-stone-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors group"
-            >
-              <Instagram className="w-3.5 h-3.5" />
-              <span>@yayandev</span>
-              <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
-            </a>
-          </div>
-        </motion.div>
+        <div className="mt-10 grid gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-8">
+          <motion.div {...fade(0.45)} className="lg:col-span-7">
+            <p className="max-w-xl text-[17px] leading-relaxed text-muted sm:text-lg">
+              {t("hero.lead")}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <ButtonLink href={SITE.whatsapp} target="_blank" rel="noreferrer">
+                {t("hero.cta.primary")}
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </ButtonLink>
+              <ButtonLink href="#projects" variant="secondary">
+                {t("hero.cta.secondary")}
+                <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+              </ButtonLink>
+            </div>
+          </motion.div>
+
+          <motion.div {...fade(0.6)} className="lg:col-span-5 lg:col-start-8">
+            <TitleBlock />
+          </motion.div>
+        </div>
       </div>
     </section>
   );

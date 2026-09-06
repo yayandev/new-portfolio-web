@@ -1,136 +1,147 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { Globe, Sun, Moon, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Sun, Moon, Menu, X } from "lucide-react";
 import { useTheme } from "@/components/theme/theme-provider";
+import { useDictionary } from "@/hooks/use-dictionary";
 import { NAV_ITEMS, SITE } from "@/lib/constants";
-import { getDictionary, t, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-export function Header() {
-  const params = useParams();
-  const locale = (params.locale as Locale) || "id";
-  const dict = getDictionary(locale);
-  const { theme, toggleTheme } = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
+function switchLocale(next: Locale) {
+  document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000; samesite=lax`;
+  window.location.href = `/${next}${window.location.hash}`;
+}
 
-  const switchLocale = (newLocale: Locale) => {
-    const path = window.location.pathname.replace(/^\/(id|en)/, `/${newLocale}`);
-    window.location.href = path;
-  };
+function LocaleSwitch({ locale, className }: { locale: Locale; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "inline-flex items-center rounded-[4px] border border-line p-0.5 font-mono text-[12px]",
+        className
+      )}
+      role="group"
+    >
+      {(["id", "en"] as const).map((code) => (
+        <button
+          key={code}
+          type="button"
+          onClick={() => switchLocale(code)}
+          aria-pressed={locale === code}
+          className={cn(
+            "h-7 rounded-[3px] px-2.5 uppercase transition-colors cursor-pointer",
+            locale === code
+              ? "bg-ink text-paper"
+              : "text-muted hover:text-ink"
+          )}
+        >
+          {code}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function Header() {
+  const { locale, t } = useDictionary();
+  const { theme, toggleTheme } = useTheme();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <header
-      id="home"
-      className="fixed top-0 inset-x-0 z-50 h-16 border-b border-stone-200/60 dark:border-stone-800/60 bg-[#fafaf9]/80 dark:bg-[#0c0c0e]/80 backdrop-blur-lg"
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300",
+        scrolled || open
+          ? "border-line bg-paper/85 backdrop-blur-md"
+          : "border-transparent bg-transparent"
+      )}
     >
-      <div className="mx-auto max-w-6xl h-full flex items-center justify-between px-6">
-        <a href="#home" className="flex items-center gap-3 group">
-          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 font-mono text-xs font-bold tracking-tight group-hover:scale-105 transition-transform">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+        <a href="#home" className="group flex items-center gap-3" aria-label={t("nav.home")}>
+          <span className="display-wide flex h-8 w-8 items-center justify-center border-2 border-ink text-[12px] leading-none tracking-normal transition-colors group-hover:bg-ink group-hover:text-paper">
             {SITE.name}
           </span>
-          <span className="hidden sm:block font-mono text-sm font-semibold tracking-tight">
+          <span className="hidden font-mono text-[13px] text-ink sm:block">
             {SITE.fullName}
           </span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-8">
-          {NAV_ITEMS.slice(0, -1).map((item) => (
+        <nav className="hidden items-center gap-7 md:flex" aria-label="Main">
+          {NAV_ITEMS.map((item) => (
             <a
               key={item.key}
               href={item.href}
-              className="text-xs font-mono tracking-wide text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
+              className="display-narrow text-[11.5px] text-muted transition-colors hover:text-ink"
             >
-              {t(dict, item.key)}
+              {t(item.key)}
             </a>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden text-xs font-mono">
-            <button
-              onClick={() => switchLocale("id")}
-              className={cn(
-                "px-2.5 py-1.5 transition-colors cursor-pointer",
-                locale === "id"
-                  ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
-                  : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100"
-              )}
-            >
-              ID
-            </button>
-            <span className="w-px h-4 bg-stone-200 dark:bg-stone-700" />
-            <button
-              onClick={() => switchLocale("en")}
-              className={cn(
-                "px-2.5 py-1.5 transition-colors cursor-pointer",
-                locale === "en"
-                  ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
-                  : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100"
-              )}
-            >
-              EN
-            </button>
-          </div>
-
+          <LocaleSwitch locale={locale} className="hidden sm:inline-flex" />
           <button
+            type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-            aria-label={t(dict, theme === "light" ? "theme.dark" : "theme.light")}
+            className="flex h-8 w-8 items-center justify-center rounded-[4px] border border-line text-muted transition-colors hover:border-ink hover:text-ink cursor-pointer"
+            aria-label={t(theme === "light" ? "theme.dark" : "theme.light")}
           >
-            {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
-
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="flex h-8 w-8 items-center justify-center rounded-[4px] border border-line text-muted transition-colors hover:border-ink hover:text-ink md:hidden cursor-pointer"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={t(open ? "menu.close" : "menu.open")}
           >
-            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
       </div>
 
-      {mobileOpen && (
-        <div className="md:hidden border-t border-stone-200 dark:border-stone-800 bg-[#fafaf9] dark:bg-[#0c0c0e]">
-          <nav className="flex flex-col px-6 py-4 gap-4">
-            {NAV_ITEMS.slice(0, -1).map((item) => (
-              <a
-                key={item.key}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-sm font-mono text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
-              >
-                {t(dict, item.key)}
-              </a>
-            ))}
-            <div className="flex items-center gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
-              <button
-                onClick={() => switchLocale("id")}
-                className={cn(
-                  "px-3 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer",
-                  locale === "id"
-                    ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
-                    : "text-stone-500 hover:text-stone-900"
-                )}
-              >
-                ID
-              </button>
-              <button
-                onClick={() => switchLocale("en")}
-                className={cn(
-                  "px-3 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer",
-                  locale === "en"
-                    ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
-                    : "text-stone-500 hover:text-stone-900"
-                )}
-              >
-                EN
-              </button>
-            </div>
-          </nav>
+      <div
+        id="mobile-menu"
+        hidden={!open}
+        className="absolute inset-x-0 top-full h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-paper md:hidden"
+      >
+        <nav className="flex flex-col px-5 pt-6 sm:px-8" aria-label="Mobile">
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.key}
+              href={item.href}
+              onClick={() => setOpen(false)}
+              className="display-wide border-b border-line py-5 text-3xl text-ink transition-colors hover:text-accent"
+            >
+              {t(item.key)}
+            </a>
+          ))}
+        </nav>
+        <div className="flex items-center justify-between px-5 py-6 sm:px-8">
+          <span className="display-narrow text-[11px] text-faint">{t("lang.label")}</span>
+          <LocaleSwitch locale={locale} />
         </div>
-      )}
+      </div>
     </header>
   );
 }

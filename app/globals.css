@@ -2,26 +2,110 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --font-sans: "Inter", "system-ui", -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+:root {
+  --paper: #f7f7f4;
+  --surface: #ffffff;
+  --ink: #121419;
+  --muted: #5f6370;
+  --faint: #9a9da6;
+  --line: #dcddd7;
+  --line-strong: #b9bbb3;
+  --accent: #3038c9;
+  --accent-ink: #ffffff;
+  --accent-soft: #e8e9fb;
+  --ok: #1e9e5a;
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #0e0f13;
+  --surface: #15171d;
+  --ink: #edeee9;
+  --muted: #9a9eab;
+  --faint: #6b6f7b;
+  --line: #262932;
+  --line-strong: #3a3e4a;
+  --accent: #a4a8ff;
+  --accent-ink: #0e0f13;
+  --accent-soft: #1c1e33;
+  --ok: #3dbe7a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+}
+
+/* Display type: two ends of Archivo's width axis carry the identity.
+   Wide + heavy for statements, narrow + spaced for labels. */
+@utility display-wide {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 110;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+@utility display-narrow {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 75;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1.5px);
+  background-size: 24px 24px;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
+  background-color: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background-color: #3b82f6;
-  color: #fff;
+  background-color: var(--accent);
+  color: var(--accent-ink);
 }
 
-.dark ::selection {
-  background-color: #60a5fa;
-  color: #0a0a0b;
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

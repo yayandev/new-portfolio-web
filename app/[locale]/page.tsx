@@ -1,19 +1,29 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/sections/hero";
-import { Capabilities } from "@/components/sections/capabilities";
+import { Services } from "@/components/sections/services";
 import { Portfolio } from "@/components/sections/portfolio";
-import { WhyUs } from "@/components/sections/why-us";
+import { Approach } from "@/components/sections/approach";
+import { Contact } from "@/components/sections/contact";
+import { isLocale, type Locale } from "@/lib/i18n";
 
-export default function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : "id";
+
   return (
     <>
       <Header />
-      <main>
+      <main id="home" className="scroll-mt-16">
         <Hero />
-        <Capabilities />
-        <Portfolio />
-        <WhyUs />
+        <Services />
+        <Portfolio locale={locale} />
+        <Approach />
+        <Contact />
       </main>
       <Footer />
     </>

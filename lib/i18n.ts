@@ -6,6 +6,10 @@ export type Locale = (typeof locales)[number];
 
 const dictionaries: Record<Locale, Record<string, string>> = { id, en };
 
+export function isLocale(value: string | undefined): value is Locale {
+  return locales.includes(value as Locale);
+}
+
 export function getDictionary(locale: Locale) {
   return dictionaries[locale] ?? dictionaries.id;
 }
